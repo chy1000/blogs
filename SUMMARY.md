@@ -8,6 +8,8 @@
     * [怎样扩容系统磁盘](kvm/怎样扩容系统磁盘.md)
     * [KVM增量镜像制作](kvm/KVM增量镜像制作.md)
     * [解决PVE安装后上不了网的问题](kvm/解决PVE安装后上不了网的问题.md)
+    * [使用LVM实现KVM的快照功能](kvm/使用LVM实现KVM的快照功能.md)
+    * [virsh managedsave 保存运行状态](kvm/virsh_managedsave保存运行状态.md)
 * Docker
     * [Docker的网络原理](docker/Docker的网络原理.md)
 * Network & OVS
@@ -15,9 +17,11 @@
     * [网络实险：实现局域网不同网段的IP互通](network/网络实险：实现局域网不同网段的IP互通.md)
     * [VMware桥接虚拟机上不了网的问题排查](network/VMware桥接虚拟机上不了网的问题排查.md)
     * [为什么默认网关只能有一个](network/为什么默认网关只能有一个.md)
+    * [当误删了 OVS 某个 br 的所有流量规则，导致网络不通，怎样补救](ovs/当误删了 OVS 某个 br 的所有流量规则，导致网络不通，怎样补救.md)
 * Golang
-* PHP
-* Python
+* PHP & Laravel
+    * [Laravel设计模式之工厂方法模式](laravel/Laravel设计模式之工厂方法模式.md)
 * Linux
+* Python
 * Other
 

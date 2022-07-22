@@ -53,8 +53,6 @@ iface eno1.33 inet manual
 iface eno2 inet manual
 iface eno3 inet manual
 iface eno4 inet manual
-
-(参考：https://www.ichenfu.com/2018/12/24/centos-bonding-vlan-bridge/)
 ```
 
 配置好后重启网络，发现网络终于通了。但我有点想不通的是，按照我一贯的理解，trunk端口只是用于交换机之间的连接的，我这里直接配置网卡，怎么也需要配置 vlan 号？

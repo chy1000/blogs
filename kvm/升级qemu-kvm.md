@@ -39,3 +39,7 @@ yum remove kernel-xxx.el7.x86_64
 ```
 
 到这里升级已经完成，并不需要重启机器就生效了的。
+
+
+
+>  附：《[archlinux QEMU 文档](https://wiki.archlinux.org/title/QEMU#By_specifying_kernel_and_initrd_manually)》- 文档值得细看
