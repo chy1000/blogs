@@ -64,15 +64,23 @@ ip link set dev docker-br3 up # 启动网桥
 pipework docker-br3 resin 172.25.0.23/16@172.25.0.1 # 设置容器的IP
 ```
 
-这时，我们在宿主机上 ping 172.25.0.23 是可以 ping 通容器的IP的，证明容器内网环境已经配置好。最后我们要解决的是容器内部上网的问题。
+这时，我们在宿主机上 ping 172.25.0.23 是可以 ping 通容器的IP的，证明容器内网环境已经配置好。最后我们要解决的是容器内部上网的问题。通过下面的命令**开启NAT转发**。
 
 ```shell
-firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address={可以访问的外部IP}/32 forward-port port=8080 protocol=tcp to-port=8080 to-addr=172.25.0.23'
+firewall-cmd --zone=public --permanent --add-masquerade; firewall-cmd --reload
 ```
 
-通过 firewall 的端口转发功能，将外部的 8080 端口的流量转发到容器内部的 8080 端口，最终实现容器上网的功能。
+通过上面的步骤，我们已经实现容器内部上网，但如果在外部网络访问容器，还需要设置端口转发。
 
-#### 结果书本理解 NAT
+```shell
+firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address={可以访问的外部IP}/32 forward-port port=8080 protocol=tcp to-port=8080 to-addr=172.25.0.23'; firewall-cmd --reload
+```
+
+通过 firewall 的端口转发功能，将外部的 8080 端口的流量转发到容器内部的 8080 端口，最终实现在外部访问容器。
+
+
+
+#### 结合书本理解 NAT
 
 
 
