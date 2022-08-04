@@ -10,11 +10,11 @@
 
 ### Laravel框架里面的工厂模式
 
-Laravel 其实很多地方有用到工厂方法模式，其中 Auth 认证就用到工厂方法模式。我们看一张简化了的类图：
+`Laravel` 其实很多地方有用到工厂方法模式，其中 `Auth` 认证就用到工厂方法模式。我们看一张简化了的类图：
 
 ![image-20220705102312076](Laravel设计模式之工厂方法模式.assets/image-20220705102312076.png)
 
-AuthManager 是工厂方法，通过这个工厂方法来调用 createSessionDriver() 或 createTokenDriver() ，创建 SessionGuard 或 TokenGuard 的实例。当我们定义好 guard ，使用时只需要在控制器的构造函数加入
+`AuthManager` 是工厂方法，通过这个工厂方法来调用 `createSessionDriver()` 或 `createTokenDriver()` ，创建 `SessionGuard` 或 `TokenGuard` 的实例。当我们定义好 `guard` ，使用时只需要在控制器的构造函数加入
 
 ```php
 $this->middleware('auth:admin');
@@ -28,17 +28,17 @@ $this->auth->guard($guard)->check()
 
 这一条语句。
 
-当我们需要增加新的认证，但原来的认证类不适用时，我们可以继承 Guard 接口，写过一个新的认证类，而不需要修改任何的业务逻辑代码。假如我们原系统是使用 SessionGuard 认证的，当我们想改为 TokenGuard 认证方式时，也很简单，我们只需要在 config 的配置文件修改切换即可。
+当我们需要增加新的认证，但原来的认证类不适用时，我们可以继承 `Guard` 接口，写过一个新的认证类，而不需要修改任何的业务逻辑代码。假如我们原系统是使用 `SessionGuard` 认证的，当我们想改为 `TokenGuard` 认证方式时，也很简单，我们只需要在 `config` 的配置文件修改切换即可。
 
 通过工厂方法模式，使我们系统变得可模块化和可配置化。
 
-除了 Auth ，还有 Illuminate\Cache 通过 [CacheManager](https://github.com/laravel/framework/blob/5.6/src/Illuminate/Cache/CacheManager.php) 实现多个缓存驱动，Illuminate\Filesystem通过 [FilesystemManager](https://github.com/laravel/framework/blob/5.6/src/Illuminate/Filesystem/FilesystemManager.php) 实现多个文件驱动，这两个均是工厂模式的典型实现。
+除了 `Auth` ，还有 `Illuminate\Cache` 通过 [`CacheManager`](https://github.com/laravel/framework/blob/5.6/src/Illuminate/Cache/CacheManager.php) 实现多个缓存驱动，`Illuminate\Filesystem`通过 [`FilesystemManager`](https://github.com/laravel/framework/blob/5.6/src/Illuminate/Filesystem/FilesystemManager.php) 实现多个文件驱动，这两个均是工厂模式的典型实现。
 
 
 
-### 如何优雅的实践 (段摘自：http://blog.neychang.com/posts/14)
+### 如何优雅的实践 (段摘自：`http://blog.neychang.com/posts/14`)
 
-Laravel框架的源码里面包含了很多可以学习和借鉴的设计模式实现范例，甚至上面所写的工厂模式，Laravel框架源码里面已经提供了一个通用的工厂实现抽象类 [Manager](https://github.com/laravel/framework/blob/5.6/src/Illuminate/Support/Manager.php) 来方便开发者利用它实现工厂模式。仔细看它的内部结构， 其实和上面的几个Manager类的思路是一致的。我们在业务开发中，如果需要实现工厂模式时，完全可以继承Manager抽象类，来管理自己的类实例化。
+`Laravel`框架的源码里面包含了很多可以学习和借鉴的设计模式实现范例，甚至上面所写的工厂模式，`Laravel`框架源码里面已经提供了一个通用的工厂实现抽象类 [`Manager`](https://github.com/laravel/framework/blob/5.6/src/Illuminate/Support/Manager.php) 来方便开发者利用它实现工厂模式。仔细看它的内部结构， 其实和上面的几个`Manager`类的思路是一致的。我们在业务开发中，如果需要实现工厂模式时，完全可以继承`Manager`抽象类，来管理自己的类实例化。
 
 例如下面的写法:
 
