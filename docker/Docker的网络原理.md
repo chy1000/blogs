@@ -58,10 +58,16 @@ services:
 network_mode: "none"，表示容器不自动创建网络。接下来，我们手动创建网桥 docker-br3，并将容器连接到网桥上
 
 ```shell
-brctl addbr docker-br3 # 创建网桥
+# 创建网桥
+yum install bridge-utils -y
+brctl addbr docker-br3
 ip addr add 172.25.0.1/24 dev docker-br3 # 设置网桥的路由
 ip link set dev docker-br3 up # 启动网桥
-pipework docker-br3 resin 172.25.0.23/16@172.25.0.1 # 设置容器的IP
+# 使用 pipework 设置容器的IP
+yum install git -y
+git clone https://ghproxy.com/https://github.com/jpetazzo/pipework.git
+cp -rp pipework/pipework /usr/local/bin/
+pipework docker-br3 resin 172.25.0.23/16@172.25.0.1 
 ```
 
 这时，我们在宿主机上 ping 172.25.0.23 是可以 ping 通容器的IP的，证明容器内网环境已经配置好。最后我们要解决的是容器内部上网的问题。通过下面的命令**开启NAT转发**。
