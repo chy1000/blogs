@@ -24,6 +24,7 @@
     * [读书：图解TCP/IP](network/读书：图解TCP-IP].md)
 * Golang
     * [正则的两种使用方式](golang/正则的两种使用方式.md)
+    * [var 与 func 定义函数的区别](golang/var与func定义函数的区别.md)
 * PHP & Laravel
     * [Laravel设计模式之工厂方法模式](laravel/Laravel设计模式之工厂方法模式.md)
 * Linux
