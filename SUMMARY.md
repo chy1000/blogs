@@ -28,6 +28,7 @@
 * PHP & Laravel
     * [Laravel设计模式之工厂方法模式](laravel/Laravel设计模式之工厂方法模式.md)
 * Linux
+    * [vrrpd 实现双主服务器](linux/vrrpd实现双主服务器.md)
 * Python
 * Other
 
