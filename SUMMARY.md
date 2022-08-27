@@ -22,6 +22,7 @@
     * [误删 OVS 某个 br 的所有流量规则，导致网络不通，怎样补救](ovs/误删OVS某个br的所有流量规则，导致网络不通，怎样补救.md)
     * [读书：网络是怎样连接的](network/读书：网络是怎样连接的].md)
     * [读书：图解TCP/IP](network/读书：图解TCP-IP].md)
+    * [第一次接触华为交换机](network/第一次接触华为交换机.md)
 * Golang
     * [正则的两种使用方式](golang/正则的两种使用方式.md)
     * [var 与 func 定义函数的区别](golang/var与func定义函数的区别.md)

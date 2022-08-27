@@ -10,7 +10,7 @@
 2. 在母机备份好客户的磁盘文件，防止扩容出错文件损坏，导致客户机器数据丢失。再使用`qemu-img resize`对系统磁盘进行扩容
 
    ```shell
-   qemu-img resize /data/qycloud/Disks/System/qyi-88736948001-5901-01.img +80G
+   qemu-img resize /data/qycloud/Disks/System/{guid}-01.img +80G
    ```
 
 3. 进入客户的机器使用`LVM`进行扩容
