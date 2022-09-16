@@ -23,6 +23,7 @@
     * [读书：网络是怎样连接的](network/读书：网络是怎样连接的].md)
     * [读书：图解TCP/IP](network/读书：图解TCP-IP].md)
     * [第一次接触华为交换机](network/第一次接触华为交换机.md)
+    * [网络基础：什么是Vlan](network/网络基础：什么是Vlan.md)
 * Golang
     * [正则的两种使用方式](golang/正则的两种使用方式.md)
     * [var 与 func 定义函数的区别](golang/var与func定义函数的区别.md)
@@ -32,4 +33,5 @@
     * [vrrpd 实现双主服务器](linux/vrrpd实现双主服务器.md)
 * Python
 * Other
+    * [在win7下安装typora和gitbook](other/在win7下安装typora和gitbook.md)
 

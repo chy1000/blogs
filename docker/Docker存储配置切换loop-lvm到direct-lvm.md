@@ -5,7 +5,15 @@
 #### 什么是`loop`设备
 
 是一种伪设备，是使用文件来模拟块设备的一种技术，文件模拟成块设备后，就像一个磁盘或光盘一样使用。
-在`docker`使用 `loop`设备，我们不需要额外的配置，程序自动化配置。但这种存储方式稳定性差、性能也差。运行`docker info`就可以看到提示，包括docker官方都不推荐使用loop设备的存储方式，而是推荐使用Direct LVM存储。
+下面这个例子，我们将`iso`挂载为`loop`设备：
+
+```shell
+mount -o loop ubuntu-16.10-server-amd64.iso /mnt/iso
+# 查看挂载
+losetup -a
+```
+
+在`docker`使用 `loop`设备，我们不需要额外的配置，程序自动化配置。但这种存储方式稳定性差、性能也差。运行`docker info`就可以看到提示，包括`docker`官方都不推荐使用`loop`设备的存储方式，而是推荐使用`Direct LVM`存储。
 
 ```shell
 [root@QYSR058Z ~]# docker info
@@ -16,7 +24,7 @@ WARNING: devicemapper: usage of loopback devices is strongly discouraged for pro
 
 
 
-#### 手动配置Direct LVM
+#### 手动配置`Direct LVM`
 
 ```shell
 # 查看磁盘是否已增加
@@ -69,7 +77,7 @@ Pool Name: docker-thinpool
 .....
 ```
 
-当执行上面的配置时出现报错：Error starting daemon: error initializing graphdriver: devmapper: Unable to take ownership of thin-pool (docker-thinpool) that already has used data blocks，我们按下面的命令删除 thinpool ，再重新创建。
+当执行上面的配置时出现报错：`Error starting daemon: error initializing graphdriver: devmapper: Unable to take ownership of thin-pool (docker-thinpool) that already has used data blocks`，我们按下面的命令删除 `thinpool` ，再重新创建。
 
 ```
 lvremove -f /dev/mapper/docker-thinpool
