@@ -18,13 +18,16 @@ PE越大，`LVM`的碎片就越少，但它在移动东西和填充空洞方面�
 
 **常用命令**
 
-```shell
-pvscan、pvs、pvdisplay
-vgscan、vgs、vgdisplay
-lvscan、lvs、lvdisplay
-# 查看 lv 的祖先和后代
-lvs -o name,lv_ancestors,lv_descendants {vg_name}
-```
+| 任务                | PV 阶段   | VG 阶段   | LV 阶段             |
+| ------------------- | --------- | --------- | ------------------- |
+| 搜寻(scan)          | pvscan    | vgscan    | lvscan              |
+| 创建(create)        | pvcreate  | vgcreate  | lvcreate            |
+| 列出(display)       | pvdisplay | vgdisplay | lvdisplay           |
+| 添加(extend)        |           | vgextend  | lvextend (lvresize) |
+| 减少(reduce)        |           | vgreduce  | lvreduce (lvresize) |
+| 删除(remove)        | pvremove  | vgremove  | lvremove            |
+| 改变容量(resize)    |           |           | lvresize            |
+| 改变属性(attribute) | pvchange  | vgchange  | lvchange            |
 
 
 
