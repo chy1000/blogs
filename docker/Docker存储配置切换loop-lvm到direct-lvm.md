@@ -53,7 +53,7 @@ lvchange --metadataprofile docker-thinpool docker/thinpool
 lvs -o+seg_monitor
 # 配置 /etc/docker/daemon.json
 mkdir /etc/docker/
-vi daemon.json
+vi /etc/docker/daemon.json
 {
     "storage-driver": "devicemapper",
     "storage-opts": [

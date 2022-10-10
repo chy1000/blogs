@@ -15,15 +15,16 @@
     * [Docker的网络原理](docker/Docker的网络原理.md)
     * [Docker存储配置切换loop-lvm到direct-lvm](docker/Docker存储配置切换loop-lvm到direct-lvm.md)
 * Network & OVS
-    * [网络实险：简单的局域网连接测试](network/网络实险：简单的局域网连接测试.md)
-    * [网络实险：实现局域网不同网段的IP互通](network/网络实险：实现局域网不同网段的IP互通.md)
+    * [[网络实险] 简单的局域网连接测试](network/[网络实险]简单的局域网连接测试.md)
+    * [[网络实险] 实现局域网不同网段的IP互通](network/[网络实险]实现局域网不同网段的IP互通.md)
     * [VMware桥接虚拟机上不了网的问题排查](network/VMware桥接虚拟机上不了网的问题排查.md)
     * [为什么默认网关只能有一个](network/为什么默认网关只能有一个.md)
     * [误删 OVS 某个 br 的所有流量规则，导致网络不通，怎样补救](ovs/误删OVS某个br的所有流量规则，导致网络不通，怎样补救.md)
-    * [读书：网络是怎样连接的](network/读书：网络是怎样连接的].md)
-    * [读书：图解TCP/IP](network/读书：图解TCP-IP].md)
+    * [[读书] 网络是怎样连接的](network/[读书]网络是怎样连接的].md)
+    * [[读书] 图解TCP/IP](network/[读书]图解TCP-IP].md)
     * [第一次接触华为交换机](network/第一次接触华为交换机.md)
-    * [网络基础：什么是Vlan](network/网络基础：什么是Vlan.md)
+    * [[网络基础] 什么是Vlan](network/[网络基础]什么是Vlan.md)
+    * [华为交换机怎样限制某一IP只允许特定的IP访问](network/华为交换机怎样限制某一IP只允许特定的IP访问.md)
 * Golang
     * [正则的两种使用方式](golang/正则的两种使用方式.md)
     * [var 与 func 定义函数的区别](golang/var与func定义函数的区别.md)
@@ -31,6 +32,7 @@
     * [Laravel设计模式之工厂方法模式](laravel/Laravel设计模式之工厂方法模式.md)
 * Linux
     * [vrrpd 实现双主服务器](linux/vrrpd实现双主服务器.md)
+    * [教训！不要随意缩小LVM的大小](linux/教训！不要随意缩小LVM的大小.md)
 * Python
 * Other
     * [在win7下安装typora和gitbook](other/在win7下安装typora和gitbook.md)

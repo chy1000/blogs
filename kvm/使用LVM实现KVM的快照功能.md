@@ -300,7 +300,27 @@ lrwxrwxrwx 1 root root 8 Sep 20 12:21 qyi-99118396001-5932-01.img -> ../dm-26
 
 
 
+----
 
+### 使用外部原点将标准LV转换为精简`LV`
+
+将`ExampleLV`转换为具有新名称`ExternalLV`的只读外部`LV`，并创建一个新的精简`LV`，该新LV的名称与`ExampleLV`相同。
+命令：`lvconvert --type thin --thinpool VG/ThinPoolLV --originname ExternalLV --thin VG/ExampleLV`
+
+```shell
+[root@localhost ~]# lvcreate -n lv_example -L 10G vg
+[root@localhost ~]# lvs
+lv_example      vg          -wi-a-----  10.00g
+
+[root@localhost ~]# lvconvert --type thin --thinpool vg/poolC --originname lv_external --thin vg/lv_example
+
+[root@localhost ~]# lvs
+LV              VG          Attr       LSize   Pool  Origin
+lv_example      vg          Vwi-a-tz--  10.00g poolC lv_external
+lv_external     vg          ori-------  10.00g
+```
+
+（摘自：https://blog.csdn.net/allway2/article/details/102887734）
 
 ----
 
@@ -328,6 +348,38 @@ TASK OK
 
 -------
 
+###  thin_delta：打印两个thin之间的映射差异
+
+```shell
+[root@vm ~]# lvs
+  LV                          VG     Attr       LSize   Pool      Origin                      Data%  Meta%  Move Log Cpy%Sync Convert
+  root                        centos -wi-ao---- 211.57g
+  swap                        centos -wi-ao---- <58.46g
+  data-pool                   data   twi-aotz-- 510.00g                                       98.04  60.48
+  data-volume                 data   Vwi-aotz-- 500.00g data-pool                             99.99
+  disk-pool                   data   twi-aotz--   4.88t                                       0.16   10.63
+  qyi-99118396001-5932-01.img data   Vwi-a-tz--  40.00g disk-pool                             17.64
+  qyi-99118396001-5932-01.sn1 data   Vwi-a-tz--  40.00g disk-pool qyi-99118396001-5932-01.img 17.69
+  qyi-99118396001-5932-01.sn2 data   Vwi---tz-k  40.00g disk-pool qyi-99118396001-5932-01.sn1
+[root@vm ~]# lvs --noheadings -o thin_id data/qyi-99118396001-5932-01.sn1
+     2
+[root@vm ~]# lvs --noheadings -o thin_id data/qyi-99118396001-5932-01.sn2
+     3
+# Reserve the metadata，注：这里是-tpool
+[root@vm ~]# dmsetup message /dev/mapper/data-disk--pool-tpool 0 reserve_metadata_snap
+
+# Determine the difference between the snapshots
+[root@vm ~]# thin_delta  -m --snap1 2 --snap2 3 /dev/mapper/data-disk--pool_tmeta
+
+# Release the metadata snapshot.  Try to keep this window short.
+[root@vm ~]# dmsetup message /dev/mapper/data-disk--pool_tmeta --thinpool-tpool 0 release_metadata_snap
+```
+看了一些第三方的`lvm`同步的软件，感觉都是通过`thin_dump`和`thin_delta`来实现组件的。以后有空再深入研究！
+
+----
+
+
+
 ### 参考文章：
 
 《[烂泥：LVM学习之KVM利用LVM快照备份与恢复虚拟机](https://www.ilanni.com/?p=6519)》
@@ -351,3 +403,8 @@ TASK OK
 《[KVM:ConvertQcow2ToLVM](https://www.headdesk.me/KVM:ConvertQcow2ToLVM)》- 通过这种方式可以将 Qcow2 转称为 LVM
 
 《鸟哥私房菜：[**第十五章、磁碟配额(Quota)与进阶文件系统管理**](http://cn.linux.vbird.org/linux_basic/0420quota.php)》- 比较基础和全面的教程
+
+《[Migrating LVM thin {pools,volumes,snapshots} to a software RAID environment](https://myles.sh/migrating-a-lvm-thinpool-to-a-raid-environment/)》- 迁移LVM
+
+《[Lvm – How to run lvm’s thin_dump or thin_check? metadata can’t be live, but then what option do you use](https://itecnotes.com/server/lvm-how-to-run-lvms-thin_dump-or-thin_check-metadata-cant-be-live-but-then-what-option-do-you-use/)》- thin_dump的使用
+

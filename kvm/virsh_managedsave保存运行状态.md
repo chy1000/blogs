@@ -59,3 +59,24 @@ total 0
 
 从上面的例子，我们可以看到当机器启动后，qyi-99118396001-5932.save 就被删除了。如果我们要实现像 PVE 那样，每个快照都保存机器状态，要怎样做呢？`cp /var/lib/libvirt/qemu/save/qyi-99118396001-5932.save {保存状态的目录}` 将状态文件保存到别的机器，当需要恢复时，再将文件拷贝回 `/var/lib/libvirt/qemu/save/` 重新启动机器就可以了。
 
+
+
+------------
+
+**2022-9-28 更新：**
+
+怎样处理内存状态迁移到别的母机运行报错：
+
+```
+virsh restore qyi-00000000000-8000.state1
+error: Failed to restore domain from qyi-00000000000-8000.state1
+error: internal error: process exited while connecting to monitor: qemu-kvm: -machine pc-i440fx-rhel7.6.0,accel=kvm,usb=off,dump-guest-core=off,mem-merge=off: Unsupported machine type
+Use -machine help to list supported machines!
+```
+
+这是由于qemu-kvm的版本不一致导致的问题的，可以过过升级版本解决。
+
+```
+/usr/libexec/qemu-kvm -M  help
+```
+
