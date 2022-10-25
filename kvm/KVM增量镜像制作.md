@@ -85,6 +85,9 @@ rm -f /etc/udev/rules.d/70-persistent-net.rules;
 cat /dev/null > /var/spool/mail/root
 history -c && history -w && poweroff;
 
+### 使用 virt-sysprep 清理镜像（该命令可清理MAC和操作历史等一系列操作）
+virt-sysprep -a centos6.5_32_2021_v1.qcow2
+
 ### 最后压缩镜像，减少文件大小，方便传输
 qemu-img convert -c -B centos6.5_32_v1.qcow2 -O qcow2 centos6.5_32_2021_v1.qcow2 centos6.5_32_2021_v1_compress.qcow2
 ```
@@ -202,6 +205,23 @@ apt-get install package
 #### ubuntu 镜像制作
 
 ```shell
+### 设置为中国时区
+cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+### 为确保时间同步正确，再安排另一种时间同步
+apt-get -y install rdate
+# crontab -e 增加如下定时任务
+*/20 * * * * /usr/sbin/rdate -s time.nist.gov > /dev/null 2>&1
+
+ssh-keygen -A
+
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+qemu-img commit -f qcow2 /home/qycloud/Disks/System/qyi-00000000000-8005-01.img
+
+virt-sysprep --enable abrt-data,backup-files,bash-history,blkid-tab,crash-data,dhcp-client-state,dhcp-server-state,dovecot-data,logfiles,machine-id,mail-spool,net-hostname,net-hwaddr,pacct-log,package-manager-cache,pam-data,passwd-backups,puppet-data-log,rh-subscription-manager,rhn-systemid,rpm-db,samba-db-log,script,smolt-uuid,ssh-hostkeys,ssh-userdir,sssd-db-log,tmp-files,udev-persistent-net,utmp,yum-uuid,customize,lvm-uuids -a /home/qycloud/Images/ubuntu20.04_x64_2020_v1.qcow2
+
 qemu-img create -f qcow2 -o backing_file=ubuntu18.04.4_x64_2020_v1.qcow2 /data/test/Images/ubuntu18.04.4_x64_2020_v2.qcow2
 
 run guestmount -a /data/test/Images/ubuntu18.04.4_x64_2020_v2.qcow2 -m /dev/sda2 /mnt1
@@ -212,4 +232,7 @@ rm /mnt1/etc/resolv.conf
 
 ### 取消挂载
 run guestunmount /mnt1
+
+### 使用 virt-sysprep 清理镜像（该命令可清理MAC和操作历史等一系列操作）
+virt-sysprep -a /data/test/Images/ubuntu18.04.4_x64_2020_v2.qcow2
 ```
