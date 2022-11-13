@@ -11,7 +11,7 @@
     * [使用LVM实现KVM的快照功能](kvm/使用LVM实现KVM的快照功能.md)
     * [virsh managedsave 保存运行状态](kvm/virsh_managedsave保存运行状态.md)
     * [将系统损坏机器磁盘挂载到新机器上恢复数据](kvm/将系统损坏机器磁盘挂载到新机器上恢复数据.md)
-    * [kvm问题集](kvm/kvm问题集.md)
+    * [kvm遇到的问题整理](kvm/kvm遇到的问题整理.md)
 * Docker
     * [Docker的网络原理](docker/Docker的网络原理.md)
     * [Docker存储配置切换loop-lvm到direct-lvm](docker/Docker存储配置切换loop-lvm到direct-lvm.md)
@@ -34,6 +34,7 @@
 * Linux
     * [vrrpd 实现双主服务器](linux/vrrpd实现双主服务器.md)
     * [教训！不要随意缩小LVM的大小](linux/教训！不要随意缩小LVM的大小.md)
+    * [通过firewalld实现流量转发功能](linux/通过firewalld实现流量转发功能.md)
 * Python
 * Other
     * [在win7下安装typora和gitbook](other/在win7下安装typora和gitbook.md)

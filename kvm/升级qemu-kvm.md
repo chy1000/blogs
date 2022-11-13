@@ -53,7 +53,19 @@ yum remove kernel-xxx.el7.x86_64
 
 **2022-9-28 补充：**
 
-后来发现，如果是单纯想升级 `qemu-kvm`，不用升级内核也行的。升级内核，当机器重启后，有可能磁盘挂载出现问题。
+后来发现，如果是单纯想升级 `qemu-kvm`，不用升级内核也行的。升级内核，如果系统跨度太大，当机器重启后，有可能磁盘挂载出现问题。为避免机器意外重启不能正常进入系统，所以我们需要将系统设置回旧的内核。
+
+```shell
+# 查看所有可启动的内核
+cat /boot/grub2/grub.cfg | grep menuentry
+# 设置为旧内核启动
+grub2-set-default 1 # 或 grub2-set-default 'CentOS Linux, with Linux 3.10.0-123.el7.x86_64'
+grub2-mkconfig -o /boot/grub2/grub.cfg
+# 查看设置是否成功
+grub2-editenv list
+```
+
+
 
 
 ----
