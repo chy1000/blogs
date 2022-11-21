@@ -182,48 +182,6 @@ qemu-img convert -c -B windows2008_r2_sp1_data_x64_2020_v1.qcow2 -O qcow2 window
 
 
 
-### ubuntu 镜像制作
-
-首先创建新的增量镜像，新增的镜像指向基础镜像
-
-```shell
-qemu-img create -f qcow2 -o backing_file=ubuntu18.04.4_x64_2020_v1.qcow2 /data/test/Images/ubuntu18.04.4_x64_2020_v2.qcow2
-```
-
-以这个增量镜像创建一台虚拟机，进入虚拟机进行设置
-
-```shell
-# 设置为中国时区
-cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-
-# 为确保时间同步正确，再安排另一种时间同步
-apt-get -y install rdate
-# crontab -e 增加如下定时任务
-*/20 * * * * /usr/sbin/rdate -s time.nist.gov > /dev/null 2>&1
-
-# 生成 ssh 文件
-ssh-keygen -A
-
-# 设置可以 ssh 密码登录
-sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-```
-
-设置完，关机使用命令清空刚刚登录的操作的历史记录之类的。
-
-```shell
-# 使用 virt-sysprep 清理镜像（该命令可清理MAC和操作历史等一系列操作）
-virt-sysprep -a /data/test/Images/ubuntu18.04.4_x64_2020_v2.qcow2
-
-# 由于我们前面做了 crontab ，使用 virt-sysprep 会清空我们的定时任务，所以我们不要用上面那条命令，用下面这条
-virt-sysprep --list-operations
-virt-sysprep --enable abrt-data,backup-files,bash-history,blkid-tab,crash-data,dhcp-client-state,dhcp-server-state,dovecot-data,logfiles,machine-id,mail-spool,net-hostname,net-hwaddr,pacct-log,package-manager-cache,pam-data,passwd-backups,puppet-data-log,rh-subscription-manager,rhn-systemid,rpm-db,samba-db-log,script,smolt-uuid,ssh-hostkeys,ssh-userdir,sssd-db-log,tmp-files,udev-persistent-net,utmp,yum-uuid,customize,lvm-uuids -a /home/qycloud/Images/ubuntu20.04_x64_2020_v2.qcow2
-```
-
-
-
-----
-
 ### ubuntu 跟 centos 的差别
 
 ```shell

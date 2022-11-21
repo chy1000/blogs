@@ -12,6 +12,7 @@
     * [virsh managedsave 保存运行状态](kvm/virsh_managedsave保存运行状态.md)
     * [将系统损坏机器磁盘挂载到新机器上恢复数据](kvm/将系统损坏机器磁盘挂载到新机器上恢复数据.md)
     * [kvm遇到的问题整理](kvm/kvm遇到的问题整理.md)
+    * [怎样利用cloud镜像制作自己的ubuntu/debian镜像](kvm/怎样利用cloud镜像制作自己的镜像ubuntu/debian.md)
 * Docker
     * [Docker的网络原理](docker/Docker的网络原理.md)
     * [Docker存储配置切换loop-lvm到direct-lvm](docker/Docker存储配置切换loop-lvm到direct-lvm.md)
