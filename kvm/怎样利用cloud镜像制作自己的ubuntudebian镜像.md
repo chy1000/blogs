@@ -121,6 +121,11 @@ virt-sysprep --timezone "Asia/Shanghai" --enable abrt-data,backup-files,bash-his
 
 ```shell
 # 最后压缩镜像，减少文件大小，方便传输
-qemu-img convert -c -O qcow2 ubuntu20.04_x64_2020_v1.qcow2 ubuntu20.04_x64_2020_v2.qcow2
+qemu-img convert -c -O qcow2 ubuntu20.04_x64_2020_v1.qcow2 ubuntu20.04_x64_2020_v1.qcow2.compress
 ```
 
+
+
+##### 注意问题
+
+1. 制作镜像时，尽量避免重启，因为每重启一次，镜像大小都会增加。

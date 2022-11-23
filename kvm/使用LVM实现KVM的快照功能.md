@@ -378,7 +378,35 @@ TASK OK
 
 ----
 
+### mount 卡住，日志报错：device-mapper: thin: 253:8: switching pool to out-of-data-space (queue IO) mode
 
+```shell
+# 执行 mount 一直没有返回
+[root@test ~]#mount /dev/data/data-volume /data
+...
+[root@test ~]# dmesg | tail
+[ 3512.118084] device-mapper: thin: 253:8: switching pool to out-of-data-space (queue IO) mode
+[ 3512.118435] device-mapper: thin: 253:8: switching pool to write mode
+[ 3513.120113] device-mapper: thin: 253:8: switching pool to out-of-data-space (queue IO) mode
+[ 3513.120343] device-mapper: thin: 253:8: switching pool to write mode
+[ 3514.122163] device-mapper: thin: 253:8: switching pool to out-of-data-space (queue IO) mode
+[ 3514.122406] device-mapper: thin: 253:8: switching pool to write mode
+[ 3515.124187] device-mapper: thin: 253:8: switching pool to out-of-data-space (queue IO) mode
+[ 3515.124415] device-mapper: thin: 253:8: switching pool to write mode
+[ 3516.126230] device-mapper: thin: 253:8: switching pool to out-of-data-space (queue IO) mode
+[ 3516.126455] device-mapper: thin: 253:8: switching pool to write mode
+```
+
+上面搜索，搜索到红帽的相关文章：https://access.redhat.com/solutions/2136901，说是`lv`已用完空间，删除掉东西，扩展一下就可以了。
+
+```
+lvextend -l +100%FREE /dev/data/data-volume
+lvextend -l +100%FREE /dev/data/data-pool
+```
+
+
+
+-----
 
 ### 参考文章：
 
