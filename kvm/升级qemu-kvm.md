@@ -1,3 +1,5 @@
+
+
 # 升级 qemu-kvm
 
 > 如果版本太旧，虚拟机会有一些新的特性或者功能使用不了，所以我们要升级`qemu-kvm`。这里我们在`centos7`系统上使用`yum`进行安装，使用`yum`安装只能安装较为新的版本，而这个较为新的版本也已经是多年前的版本了....为什么我们不使用编译的方式来安装最新的版本呢？曾经使用过编译的方式来安装新的版本，但使用的过程中出现很多奇怪的问题，使用很不稳定。所以在这里我们只使用`yum`的方式来安装。以后有空再研究编译的安装方式。
@@ -65,7 +67,34 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 grub2-editenv list
 ```
 
+-----
 
+**2022-11-29 更新：**
+
+按上面的方法更新，有可能导致更新的版本跨度太大，导致重启不能正常进入系统。所以需要升级到指定的版本。
+
+下载指定版本-kernel：
+
+```
+kernel： http://rpm.pbone.net/index.php3?stat=3&limit=1&srodzaj=3&dl=40&search=kernel
+```
+
+下载指定版本-kernel-devel：
+
+```
+kernel-devel：http://rpm.pbone.net/index.php3?stat=3&limit=1&srodzaj=3&dl=40&search=kernel-devel
+```
+
+下载完执行安装
+
+```shell
+yum -y install kernel-ml-devel-4.12.4-1.el7.elrepo.x86_64.rpm
+# 设置开机启动顺序
+grub2-set-default 0
+grub2-mkconfig -o /boot/grub2/grub.cfg
+# 在用的机器注意不要重启
+reboot
+```
 
 
 ----

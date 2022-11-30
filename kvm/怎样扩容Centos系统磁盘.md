@@ -71,4 +71,4 @@ Name              Type        VFS  Label  Size         Parent
 /dev/centos/root  filesystem  xfs  -      40273707008  -
 ```
 
-可以看到`/dev/centos/root`已经是`40G`了。
+可以看到`/dev/centos/root`已经是`40G`了。但后来发现使用`virt-resize`扩展，有可能会导致分区名变化，如`/dev/sda1`变成`/dev/sda2`，这个变化有可能导致出错，需特别留意。
