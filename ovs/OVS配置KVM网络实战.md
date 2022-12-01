@@ -114,6 +114,10 @@ DNS2=8.8.8.8
 ZONE=public
 ```
 
+整个结构图如下所示：
+
+![bond_ovs_kvm.drawio](OVS配置KVM网络实战.assets/bond_ovs_kvm.drawio-16698643037521.png) 
+
 
 
 ### KVM的配置文件绑定OVS的Bridge
@@ -134,3 +138,11 @@ ZONE=public
     </interface>
 ```
 
+
+
+---
+
+### 参考：
+* [实战网卡bond](https://www.linuxprobe.com/actual-combat-nic-bond.html)
+* [网卡bonding模式 - bond0、1、4配置](https://www.cnblogs.com/kaishirenshi/p/10245228.html)
+* [CentOS7 ovs(Open vSwitch)のネットワーク設定方法](https://metonymical.hatenablog.com/entry/2018/12/25/210811)

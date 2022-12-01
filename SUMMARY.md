@@ -16,6 +16,7 @@
 * Docker
     * [Docker的网络原理](docker/Docker的网络原理.md)
     * [Docker存储配置切换loop-lvm到direct-lvm](docker/Docker存储配置切换loop-lvm到direct-lvm.md)
+    * [使用macvlan给容器绑定独立外网IP](docker/使用macvlan给容器绑定独立外网IP.md)
 * Network & OVS
     * [[网络实险] 简单的局域网连接测试](network/[网络实险]简单的局域网连接测试.md)
     * [[网络实险] 实现局域网不同网段的IP互通](network/[网络实险]实现局域网不同网段的IP互通.md)
