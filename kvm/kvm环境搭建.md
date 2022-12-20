@@ -3,9 +3,14 @@
 ##### 1. 检查CPU是否已开启虚拟化
 
    ```shell
-   cat /etc/redhat-release
+   # 查看当前 CPU 是否支持虚拟化
    egrep 'vmx|svm' /proc/cpuinfo
+   # 查看 VT 功能是开启
    dmesg |grep kvm
+   # 如上面的命令返回空白，执行下面的命令进行挂载
+   modprobe kvm
+   modprobe kvm_intel
+   # 如果挂载没有返回或者空白，说明可能未开启 VT 功能
    ```
 
 ##### 2. 安装 qemu-kvm libvirt libvirt-devel virt-install bridge-utils virt-viewer

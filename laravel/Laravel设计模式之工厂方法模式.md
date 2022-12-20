@@ -111,3 +111,10 @@ Demo::driver()->foo(); // 输出 'bar'
 Demo::driver("demo1")->foo(); // 输出 'bar1'
 ```
 
+
+----
+
+
+#### 参考：
+
+[工厂方法模式](https://refactoringguru.cn/design-patterns/factory-method)
