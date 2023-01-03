@@ -32,6 +32,8 @@
 * Golang
     * [正则的两种使用方式](golang/正则的两种使用方式.md)
     * [var 与 func 定义函数的区别](golang/var与func定义函数的区别.md)
+    * [指针和地址](golang/指针和地址.md)
+    * [for range 原理](golang/for range 原理.md)
 * PHP & Laravel
     * [Laravel设计模式之工厂方法模式](laravel/Laravel设计模式之工厂方法模式.md)
     * [Laravel设计模式之观察者模式](laravel/Laravel设计模式之观察者模式.md)
