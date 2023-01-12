@@ -2,7 +2,7 @@
 
 当我在一台服务器使用`go mod tidy`下载`golang`第三方包时，出现`github.com/docker/docker/api/types/events: module github.com/docker/docker/api/types/events: Get "https://goproxy.cn/github.com/docker/docker/api/types/eve: connect: no route to host`的报错。
 
-我直接curl https://goproxy.cn ，看看是否可以正常访问。
+我直接`curl https://goproxy.cn`，看看是否可以正常访问。
 
 ```shell
 [root@test DockerProtector]# curl https://goproxy.cn
