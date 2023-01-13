@@ -13,10 +13,11 @@
     * [将系统损坏机器磁盘挂载到新机器上恢复数据](kvm/将系统损坏机器磁盘挂载到新机器上恢复数据.md)
     * [kvm遇到的问题整理](kvm/kvm遇到的问题整理.md)
     * [怎样利用cloud镜像制作自己的ubuntu/debian镜像](kvm/怎样利用cloud镜像制作自己的镜像ubuntu/debian.md)
-* Docker
+* K8s & Docker
     * [Docker的网络原理](docker/Docker的网络原理.md)
     * [Docker存储配置切换loop-lvm到direct-lvm](docker/Docker存储配置切换loop-lvm到direct-lvm.md)
     * [使用macvlan给容器绑定独立外网IP](docker/使用macvlan给容器绑定独立外网IP.md)
+    * [在VMware体验K8S集群](k8s/在VMware体验K8S集群.md)
 * Network & OVS
     * [[网络实险] 简单的局域网连接测试](network/[网络实险]简单的局域网连接测试.md)
     * [[网络实险] 实现局域网不同网段的IP互通](network/[网络实险]实现局域网不同网段的IP互通.md)
