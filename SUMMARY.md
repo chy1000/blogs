@@ -17,7 +17,7 @@
     * [Docker的网络原理](docker/Docker的网络原理.md)
     * [Docker存储配置切换loop-lvm到direct-lvm](docker/Docker存储配置切换loop-lvm到direct-lvm.md)
     * [使用macvlan给容器绑定独立外网IP](docker/使用macvlan给容器绑定独立外网IP.md)
-    * [在VMware体验K8S集群](k8s/在VMware体验K8S集群.md)
+    * [安装K8S集群](k8s/安装K8S集群.md)
 * Network & OVS
     * [[网络实险] 简单的局域网连接测试](network/[网络实险]简单的局域网连接测试.md)
     * [[网络实险] 实现局域网不同网段的IP互通](network/[网络实险]实现局域网不同网段的IP互通.md)
@@ -33,6 +33,7 @@
     * [解决网站访问出现No route to host的问题](network/解决网站访问出现No route to host的问题.md)
     * [OVS怎样限制接入虚拟机的IP](ovs/OVS怎样限制接入虚拟机的IP.md)
     * [Cisco Packet Tracer](network/Cisco Packet Tracer.md)
+    * [OVS实现NAT地址转换](ovs/OVS实现NAT地址转换.md)
 * Golang
     * [Goland远程调试配置](golang/Goland远程调试配置.md)
     * [正则的两种使用方式](golang/正则的两种使用方式.md)

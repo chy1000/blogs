@@ -38,6 +38,8 @@ pc4和pc6同属vlan10，我们在pc4上可以直接ping通pc6。由于2960交换
 >
 > 总的来说，在`VLAN`中配置`IP`地址主要是为了更好的管理和控制`VLAN`中的主机。在没有其它特殊要求的情况下,不配置`IP`对网络的正常通信并没有影响。
 
+最后，vlan是属于二层技术。
+
 
 
 ### 同`Vlan`配置不同网段
@@ -49,22 +51,30 @@ pc4和pc6同属vlan10，我们在pc4上可以直接ping通pc6。由于2960交换
 上图，我创建了一个`vlan 10`，将`192.168.10.2`和`192.168.20.2`接入到`vlan 10`中，并设置`vlan 10`的主从`IP`，这样就可以在同一个`vlan`中配置不同的网段并实现互通。
 
 ```shell
-Switch> enable                                                      //进入特权模式
-Switch# configure terminal                                          //进入全局配置模式
-Switch(config)# vlan 10                                             //创建vlan 10
-Switch(config)# interface vlan 10                                   //进入vlan 10
-Switch(config-if)# ip address 192.168.10.1 255.255.255.0            //配置vlan 10的主ip地址
-Switch(config-if)# ip address 192.168.20.1 255.255.255.0 secondary  //配置vlan 10的从ip地址
-Switch(config-if)# no shutdown                                      //开启虚拟端口
+Switch> enable                                                       // 进入特权模式
+Switch# configure terminal                                           // 进入全局配置模式
+Switch(config)# vlan 10                                              // 创建 vlan 10
+Switch(config)# interface vlan 10                                    // 进入 vlan 10
+Switch(config-if)# ip address 192.168.10.1 255.255.255.0             // 配置 vlan 10 的主ip地址
+Switch(config-if)# ip address 192.168.20.1 255.255.255.0 secondary   // 配置 vlan 10 的从ip地址
+Switch(config-if)# no shutdown                                       // 开启虚拟端口
 ```
 
 注意`Cisco Packet Tracer`不支持配置`vlan`的从`IP`，上面配置`vlan`从`ip`的命令会出错，但在真实的交换机是可以配置从`IP`的。
 
-**总结**：从这一节，更加证明了我之前对于的`vlan`的理解是错的，同一`vlan`的`IP`不只是相同网段的，还可以不同网段的。**`vlan`可以理解为交换机的虚拟端口**，同属于相同虚拟端口的网络可以互通，不同虚拟端口的网络通过路由功能实现互通（`ip routing`）。其实`vlan`与`linux`中的`bridge`很相似，同样的可以像`bridge`一样设置`IP`远程管理，同样的可以像`bridge`一样配置主从`IP`。
+
+
+### 总结
+
+从这一节，更加证明了我之前对于的`vlan`的理解是错的，同一`vlan`的`IP`不只是相同网段的，还可以不同网段的。**`vlan`可以理解为交换机的虚拟端口**，同属于相同虚拟端口的网络可以互通，不同虚拟端口的网络通过路由功能实现互通（`ip routing`）。其实`vlan`与`linux`中的`bridge`很相似，同样的可以像`bridge`一样设置`IP`远程管理，也可以像`bridge`一样配置主从`IP`。
+
+还有，`vlan`和`ovs`的`Internal`端口也有点相似，同样的`ovs`的`Internal`端口可以设置`IP`远程管理，也可以配置多个`IP`。
 
 ---
 
 ### 参考：
 
 [VLAN是二层技术还是三层技术](https://www.zhihu.com/question/52278720)
+[思科三层交换机配置](https://blog.51cto.com/u_13725021/2113295)
+
 
