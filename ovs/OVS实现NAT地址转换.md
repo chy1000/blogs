@@ -160,6 +160,45 @@ firewall-cmd --direct --get-all-rules
 ```
 
 
+--------------
+
+```
+[root@gs15-148-74 ~]# tcpdump -i vm_8017_vm '(host 192.168.20.5 or host 192.168.20.1 or host 192.168.30.5 or host 192.168.30.1) and port 22'                                                          
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode                                                               listening on vm_8017_vm, link-type EN10MB (Ethernet), capture size 262144 bytes                                                           11:28:23.561952 IP 192.168.20.5.60890 > 192.168.30.5.ssh: Flags [S], seq 2639286189, win 29200, options [mss 1460,sackOK,TS val 70070495 ecr 0,nop,wscale 7], length 0
+11:28:23.562913 IP 192.168.30.5.ssh > 192.168.20.5.60890: Flags [S.], seq 3626435567, ack 2639286190, win 28960, options [mss 1460,sackOK,TS val 70044344 ecr 70070495,nop,wscale 7], length 0
+11:28:23.563126 IP 192.168.20.5.60890 > 192.168.30.5.ssh: Flags [.], ack 1, win 229, options [nop,nop,TS val 70070496 ecr 70044344], length 0
+11:28:23.564083 IP 192.168.20.5.60890 > 192.168.30.5.ssh: Flags [P.], seq 1:22, ack 1, win 229, options [nop,nop,TS val 70070497 ecr 70044344], length 21
+```
+
+```
+[root@gs15-148-74 ~]# tcpdump -i vm_8018_vm '(host 192.168.20.5 or host 192.168.20.1 or host 192.168.30.5 or host 192.168.30.1) and port 22'
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on vm_8018_vm, link-type EN10MB (Ethernet), capture size 262144 bytes
+11:28:23.562335 IP 192.168.30.1.60890 > 192.168.30.5.ssh: Flags [S], seq 2639286189, win 29200, options [mss 1460,sackOK,TS val 70070495 ecr 0,nop,wscale 7], length 0
+11:28:23.562697 IP 192.168.30.5.ssh > 192.168.30.1.60890: Flags [S.], seq 3626435567, ack 2639286190, win 28960, options [mss 1460,sackOK,TS val 70044344 ecr 70070495,nop,wscale 7], length 0
+11:28:23.563182 IP 192.168.30.1.60890 > 192.168.30.5.ssh: Flags [.], ack 1, win 229, options [nop,nop,TS val 70070496 ecr 70044344], length 0
+11:28:23.564092 IP 192.168.30.1.60890 > 192.168.30.5.ssh: Flags [P.], seq 1:22, ack 1, win 229, options [nop,nop,TS val 70070497 ecr 70044344], length 21
+11:28:23.564165 IP 192.168.30.5.ssh > 192.168.30.1.60890: Flags [.], ack 22, win 227, options [nop,nop,TS val 70044346 ecr 70070497], length 0
+11:28:23.588141 IP 192.168.30.5.ssh > 192.168.30.1.60890: Flags [P.], seq 1:22, ack 22, win 227, options [nop,nop,TS val 70044370 ecr 70070497], length 21
+```
+
+```
+ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_src=192.168.20.5, nw_dst=192.168.30.5, tcp, tcp_src=22, actions=NORMAL";
+ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_src=192.168.20.5, nw_dst=192.168.40.5, tcp, tcp_src=22, actions=NORMAL";
+ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_dst=192.168.20.1, tcp, tp_src=22, actions=NORMAL";
+ovs-ofctl add-flow br33 "ip, in_port=bond0.33, table=0, priority=99, tcp, tcp_dst=20029, actions=mod_nw_dst:192.168.20.5,mod_dl_dst:AA:FD:CE:70:44:06,mod_tp_dst:22 output:vm_8017_vm";
+ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=99, nw_src=192.168.20.5, tcp, tcp_src=22, actions=mod_nw_src:59.34.148.74,mod_dl_dst:34:00:a3:54:27:54,mod_tp_src:20029 output:bond0.33";
+```
+
+```
+ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_src=192.168.20.5, nw_dst=192.168.30.5, tcp, tcp_src=22, actions=NORMAL";
+ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_src=192.168.20.5, nw_dst=192.168.40.5, tcp, tcp_src=22, actions=NORMAL";
+ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_dst=192.168.20.1, tcp, tp_src=22, actions=NORMAL";
+ovs-ofctl add-flow br33 "ip, in_port=bond0.33, table=0, priority=99, tcp, tcp_dst=20029, actions=mod_nw_dst:192.168.20.5,mod_dl_dst:AA:FD:CE:70:44:06,mod_tp_dst:22 output:vm_8017_vm";
+ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=99, nw_src=192.168.20.5, tcp, tcp_src=22, actions=mod_nw_src:59.34.148.74,mod_dl_dst:34:00:a3:54:27:54,mod_tp_src:20029 output:bond0.33";
+```
+
+
 
 -------
 
