@@ -1,6 +1,6 @@
 # Ceph安装使用
 
-### 安装
+## 安装
 
 配置`yum`源
 
@@ -68,6 +68,8 @@ hostnamectl --static set-hostname node3
 ```
 
 配置`ntp`、`ntpdate`时间同步：
+
+> 时间不同步会导致集群的状态出现异常，所以当`ceph -s`发现有时间同步的报错，还是要及时处理。当`ceph -s`出现`health_warn clock skew detected on mon`的解决方法，详见下面的解决方法。
 
 ```shell
 # node1
@@ -138,7 +140,7 @@ ceph -s
 
 
 
-### 使用 RDB
+## 使用 RDB
 
 **创建`ceph`存储池**
 
@@ -193,7 +195,7 @@ rbd info <pool_name>/<rdb_name>
 
 ---------
 
-### RBD 磁盘扩容
+## RBD 磁盘扩容
 
 ```shell
 [root@node1 ~]# umount /home
@@ -208,7 +210,7 @@ rbd info <pool_name>/<rdb_name>
 
 --------
 
-### OSD状态为down，采用以下步骤重新格式化硬盘并将其加入ceph集群中
+## OSD状态为down，采用以下步骤重新格式化硬盘并将其加入ceph集群中
 
 ```shell
 # 步骤1：停止相应OSD服务
@@ -225,25 +227,20 @@ ceph osd rm 1
 
 ----
 
-### 为了使 Ceph 集群正常运行，以下端口必须在防火墙上打开：
+## 为了使 Ceph 集群正常运行，以下端口必须在防火墙上打开：
 
-Ceph Monitor (MON) 使用的 6789 端口
-Ceph OSD 使用的 6800-7300 端口范围
-Ceph Metadata Server (MDS) 使用的 6800 端口
-您可以使用防火墙软件配置这些规则，以便 Ceph 服务可以在必要时使用网络端口。在配置防火墙规则时，建议仅开放必要的端口，并根据需要限制访问源。
-
-如果您使用的是 CentOS/RHEL 系统，可以使用 firewalld 管理防火墙，您可以使用以下命令打开上述端口的流量：
+`Ceph Monitor (MON)` 使用的`6789`端口
+`Ceph OSD`使用的`6800-7300`端口范围
+`Ceph Metadata Server (MDS)`使用的`6800`端口
+您可以使用防火墙软件配置这些规则，以便`Ceph`服务可以在必要时使用网络端口。在配置防火墙规则时，建议仅开放必要的端口，并根据需要限制访问源。
 
 ```shell
+# CentOS/RHEL 系统，在 firewall 防火墙开放上述端口
 firewall-cmd --add-port=6789/tcp --permanent
 firewall-cmd --add-port=6800-7300/tcp --permanent
 firewall-cmd --add-port=6800/tcp --permanent
 firewall-cmd --reload
-```
-
-如果您使用的是 Ubuntu/Debian 系统，可以使用 ufw 管理防火墙，您可以使用以下命令打开上述端口的流量：
-
-```shell
+# Ubuntu/Debian 系统，在 ufw 防火墙开放上述端口
 ufw allow 6789/tcp
 ufw allow 6800:7300/tcp
 ufw allow 6800/tcp
@@ -252,7 +249,7 @@ ufw reload
 
 ----
 
-### KVM的XML配置使用Ceph存储
+## KVM的XML配置使用Ceph存储
 
 ```xml
 <disk type='network' device='disk'>
@@ -268,7 +265,28 @@ ufw reload
 
 ----
 
-### 参考：
+## `ceph -s`出现`health_warn clock skew detected on mon`的解决方法
+
+```shell
+# 在管理节点的安装配置文件修改配置
+[root@node1 ~]# vi ~/cluster/ceph.conf
+mon clock drift allowed = 2
+mon clock drift warn backoff = 30
+# 推送配置到所有节点
+[root@node1 ~]# ceph-deploy --overwrite-conf config push node{2..4}
+# 重启服务
+[root@node1 ~]# systemctl restart ceph-mon.target
+[root@node1 ~]# ceph -s
+```
+
+`mon clock drift allowed`: 允许时钟偏差的最大值，以秒为单位。如果任意两个 Ceph 节点的时钟偏差大于这个值，Ceph 将不会正常工作，并显示一个警告消息。默认值为 0.05 秒。
+`mon clock drift warn backoff`: 警告时钟偏差后的重试时间间隔，以秒为单位。如果 Ceph 集群出现时钟偏差，Ceph 会在日志中显示一个警告消息，并按照这个字段指定的时间间隔重复显示警告消息。这个字段的值会随着时间的推移而指数级增加，以避免不必要的警告消息。默认值为 30 秒。
+
+-----------------
+
+
+
+## 参考：
 
 [centos 7.7 安装ceph](https://developer.aliyun.com/article/761298)
 
