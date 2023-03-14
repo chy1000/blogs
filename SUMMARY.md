@@ -22,6 +22,8 @@
     * [Ceph安装使用](ceph/Ceph安装使用.md)
     * [K8S使用Ceph作为持久化存储](ceph/K8S使用Ceph作为持久化存储.md)
     * [Ceph故障处理集](ceph/Ceph故障处理集.md)
+    * [理解Docker的COW](docker/理解Docker的COW.md)
+    * [K8S节点挂了，Pod状态长时间不更新的问题](k8s/K8S节点挂了，Pod状态长时间不更新的问题.md)
 * Network & OVS
     * [[网络实险] 简单的局域网连接测试](network/[网络实险]简单的局域网连接测试.md)
     * [[网络实险] 实现局域网不同网段的IP互通](network/[网络实险]实现局域网不同网段的IP互通.md)
