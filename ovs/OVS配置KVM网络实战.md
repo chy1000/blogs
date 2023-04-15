@@ -148,7 +148,14 @@ ZONE=public
 
 ----------
 
-**2023/2/14 更新：**
+**ovs-tcpdump 使用**
+
+```
+yum install -y epel-release
+yum install -y centos-release-openstack-train
+yum install -y openvswitch-test
+
+```
 
 
 

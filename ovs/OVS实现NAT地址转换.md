@@ -114,16 +114,19 @@ firewall-cmd --zone=public --permanent --add-masquerade; firewall-cmd --reload
 firewall-cmd --zone=public --permanent --remove-masquerade; firewall-cmd --reload
 ```
 
-上面的命令会转发所有私有地址，如果想只转发特定的私有地址可使用如下方法：
+其实到这里已经通过`ovs + firewall`实现了`NAT`功能。
+
+但上面的命令会转发所有私有地址，如果只是想转发特定的私有地址，网上搜索到的实现方法如下：
 
 **使用`iptables`实现`NAT`转换**
 
 ```shell
 # 将源地址为 192.168.20.2 的数据包转换为具有单一公共地址的数据包
 iptables -t nat -A POSTROUTING -s 192.168.20.2 -j MASQUERADE
-# iptables –t nat –A POSTROUTING –s 192.168.20.2 –o br33 –j SNAT --to-source 59.134.48.74
+# iptables -t nat -A POSTROUTING -s 192.168.20.2 -o br33 -j SNAT --to-source 59.134.48.74
 # 查看当前正在运行的 NAT 规则
-iptables -t nat -L --line-numbers
+iptables -t nat -L POSTROUTING --line-numbers
+iptables -t nat -L --line-numbers | grep MASQUERADE
 # 删除特定的 NAT 规则
 iptables -t nat -D POSTROUTING <rule number>
 # 注意，<rule number>表示要删除的规则在列表中的位置。因此，你需要先使用 iptables -t nat -L --line-numbers 命令查看当前规则的列表，以确定要删除的规则的编号
@@ -133,74 +136,17 @@ iptables -t nat -D POSTROUTING <rule number>
 
 ```shell
 # 使用以下命令在 firewall-cmd 中实现 iptables -t nat -A POSTROUTING -s 192.168.20.2 -j MASQUERADE 功能
-firewall-cmd --direct --permanent --add-rule ipv4 nat POSTROUTING 0 -s 192.168.20.2 -j MASQUERADE
+firewall-cmd --direct --permanent --add-rule ipv4 nat POSTROUTING 0 -s 192.168.20.2 -j MASQUERADE; firewall-cmd --reload
 # 要查看当前会话中的规则，您可以使用以下命令：
 firewall-cmd --direct --get-all-rules
 ```
 
-
-
------------
-
-当设置特定IP的NAT转换时，dns被阻断的问题
-
-当设置全 MASQUERADE ，可以ping通域名，但当设置特定的IP或IP段时，还是会阻断的问题。所以猜测可能是某些内部IP也需要设置转发的问题。
-
-```shell
-[root@localhost ~]# firewall-cmd --zone=public --permanent --add-rich-rule='rule family="ipv4" masquerade'; firewall-cmd --reload
-[root@localhost ~]# iptables -t nat -L --line-numbers|grep MASQUERADE
-1    MASQUERADE  all  --  anywhere         anywhere
-# 这时候在 192.168.20.2 机器内 ping 域名是通的
-[root@localhost ~]# firewall-cmd --zone=public --permanent --remove-rich-rule='rule family="ipv4" masquerade'; firewall-cmd --reload
-
-[root@localhost ~]# firewall-cmd --zone=public --permanent --add-rich-rule='rule family="ipv4" source address="192.168.20.0/24" masquerade'; firewall-cmd --reload
-[root@localhost ~]# iptables -t nat -L --line-numbers|grep MASQUERADE
-1    MASQUERADE  all  --  192.168.20.0/24      anywhere
-# 这时候在 192.168.20.2 机器内 ping 域名不通，但IP是通的
-```
-
-
---------------
-
-```
-[root@gs15-148-74 ~]# tcpdump -i vm_8017_vm '(host 192.168.20.5 or host 192.168.20.1 or host 192.168.30.5 or host 192.168.30.1) and port 22'                                                          
-tcpdump: verbose output suppressed, use -v or -vv for full protocol decode                                                               listening on vm_8017_vm, link-type EN10MB (Ethernet), capture size 262144 bytes                                                           11:28:23.561952 IP 192.168.20.5.60890 > 192.168.30.5.ssh: Flags [S], seq 2639286189, win 29200, options [mss 1460,sackOK,TS val 70070495 ecr 0,nop,wscale 7], length 0
-11:28:23.562913 IP 192.168.30.5.ssh > 192.168.20.5.60890: Flags [S.], seq 3626435567, ack 2639286190, win 28960, options [mss 1460,sackOK,TS val 70044344 ecr 70070495,nop,wscale 7], length 0
-11:28:23.563126 IP 192.168.20.5.60890 > 192.168.30.5.ssh: Flags [.], ack 1, win 229, options [nop,nop,TS val 70070496 ecr 70044344], length 0
-11:28:23.564083 IP 192.168.20.5.60890 > 192.168.30.5.ssh: Flags [P.], seq 1:22, ack 1, win 229, options [nop,nop,TS val 70070497 ecr 70044344], length 21
-```
-
-```
-[root@gs15-148-74 ~]# tcpdump -i vm_8018_vm '(host 192.168.20.5 or host 192.168.20.1 or host 192.168.30.5 or host 192.168.30.1) and port 22'
-tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
-listening on vm_8018_vm, link-type EN10MB (Ethernet), capture size 262144 bytes
-11:28:23.562335 IP 192.168.30.1.60890 > 192.168.30.5.ssh: Flags [S], seq 2639286189, win 29200, options [mss 1460,sackOK,TS val 70070495 ecr 0,nop,wscale 7], length 0
-11:28:23.562697 IP 192.168.30.5.ssh > 192.168.30.1.60890: Flags [S.], seq 3626435567, ack 2639286190, win 28960, options [mss 1460,sackOK,TS val 70044344 ecr 70070495,nop,wscale 7], length 0
-11:28:23.563182 IP 192.168.30.1.60890 > 192.168.30.5.ssh: Flags [.], ack 1, win 229, options [nop,nop,TS val 70070496 ecr 70044344], length 0
-11:28:23.564092 IP 192.168.30.1.60890 > 192.168.30.5.ssh: Flags [P.], seq 1:22, ack 1, win 229, options [nop,nop,TS val 70070497 ecr 70044344], length 21
-11:28:23.564165 IP 192.168.30.5.ssh > 192.168.30.1.60890: Flags [.], ack 22, win 227, options [nop,nop,TS val 70044346 ecr 70070497], length 0
-11:28:23.588141 IP 192.168.30.5.ssh > 192.168.30.1.60890: Flags [P.], seq 1:22, ack 22, win 227, options [nop,nop,TS val 70044370 ecr 70070497], length 21
-```
-
-```
-ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_src=192.168.20.5, nw_dst=192.168.30.5, tcp, tcp_src=22, actions=NORMAL";
-ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_src=192.168.20.5, nw_dst=192.168.40.5, tcp, tcp_src=22, actions=NORMAL";
-ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_dst=192.168.20.1, tcp, tp_src=22, actions=NORMAL";
-ovs-ofctl add-flow br33 "ip, in_port=bond0.33, table=0, priority=99, tcp, tcp_dst=20029, actions=mod_nw_dst:192.168.20.5,mod_dl_dst:AA:FD:CE:70:44:06,mod_tp_dst:22 output:vm_8017_vm";
-ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=99, nw_src=192.168.20.5, tcp, tcp_src=22, actions=mod_nw_src:59.34.148.74,mod_dl_dst:34:00:a3:54:27:54,mod_tp_src:20029 output:bond0.33";
-```
-
-```
-ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_src=192.168.20.5, nw_dst=192.168.30.5, tcp, tcp_src=22, actions=NORMAL";
-ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_src=192.168.20.5, nw_dst=192.168.40.5, tcp, tcp_src=22, actions=NORMAL";
-ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=100, nw_dst=192.168.20.1, tcp, tp_src=22, actions=NORMAL";
-ovs-ofctl add-flow br33 "ip, in_port=bond0.33, table=0, priority=99, tcp, tcp_dst=20029, actions=mod_nw_dst:192.168.20.5,mod_dl_dst:AA:FD:CE:70:44:06,mod_tp_dst:22 output:vm_8017_vm";
-ovs-ofctl add-flow br33 "ip, in_port=vm_8017_vm, table=0, priority=99, nw_src=192.168.20.5, tcp, tcp_src=22, actions=mod_nw_src:59.34.148.74,mod_dl_dst:34:00:a3:54:27:54,mod_tp_src:20029 output:bond0.33";
-```
-
+我按照上面的方法设置了，进入虚拟机发现可以`ping`通外网的IP地址，但`ping`不通域名的问题。后来我花了比较长的时间才解决这个问题，限于本文的篇幅，在这里就不说明详细的过程了，我将另起文章进行记录。
 
 
 -------
+
+
 
 ### 参考：
 

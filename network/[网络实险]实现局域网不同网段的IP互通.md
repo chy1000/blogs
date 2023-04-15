@@ -82,4 +82,174 @@
    这时我们再 ping ，终于有返回结果了。
 
    ![image-20220328094155237]([网络实险]实现局域网不同网段的IP互通.assets/image-20220328094155237-165648905569210.png)
+   
+   
+
+------
+
+## 实现不同网桥互通
+
+使用`brctl`命令创建`br10`和`br11`
+
+```shell
+brctl addbr br10;
+brctl addbr br11;
+```
+
+再创建`ns10`和`ns11`
+
+```shell
+ip netns add ns10;
+ip link add ns10-veth0 type veth peer name ns10-veth1;
+ip link set ns10-veth1 netns ns10;
+ip netns exec ns10 ip addr add 172.16.18.101/24 dev ns10-veth1;
+ip netns exec ns10 ip link set dev ns10-veth1 up;
+ip netns exec ns10 ip route add default via 172.16.18.1;
+brctl addif br10 ns10-veth0;
+ip link set dev ns10-veth0 up;
+ip link set br10 up;
+
+ip netns add ns11;
+ip link add ns11-veth0 type veth peer name ns11-veth1;
+ip link set ns11-veth1 netns ns11;
+ip netns exec ns11 ip addr add 192.168.10.101/24 dev ns11-veth1;
+ip netns exec ns11 ip link set dev ns11-veth1 up;
+ip netns exec ns11 ip route add default via 192.168.10.1;
+brctl addif br11 ns11-veth0;
+ip link set dev ns11-veth0 up;
+ip link set br11 up;
+```
+
+在这两个`ns`执行`ping`，可以看到`ns`里的`ip`是不能互访的，但可以访问`br`的`ip`
+
+```shell
+ip netns exec ns10 ping 192.168.10.101
+PING 192.168.10.101 (192.168.10.101) 56(84) bytes of data.
+# 没返回
+ip netns exec ns11 ping 172.16.18.101
+PING 192.168.10.101 (192.168.10.101) 56(84) bytes of data.
+# 没返回
+
+ip netns exec ns10 ping 192.168.10.1
+PING 192.168.10.1 (192.168.10.1) 56(84) bytes of data.
+64 bytes from 192.168.10.1: icmp_seq=7567 ttl=64 time=0.057 ms
+64 bytes from 192.168.10.1: icmp_seq=7568 ttl=64 time=0.057 ms
+...
+ip netns exec ns11 ping 172.16.18.1
+PING 172.16.18.1 (172.16.18.1) 56(84) bytes of data.
+64 bytes from 172.16.18.1: icmp_seq=1 ttl=64 time=0.129 ms
+64 bytes from 172.16.18.1: icmp_seq=2 ttl=64 time=0.058 ms
+...
+```
+
+> 这里的`FORWARD`我简单说一下，当`Linux`收到了一个 目的`ip`地址不是本地的包 ，`Linux`会把这个包丢弃，因为默认情况下，`Linux`的三层包转发功能是关闭的，如果要让我们的`Linux`实现转发，则需要打开这个转发功能，可以 改变它的一个系统参数，使用`sysctl net.ipv4.ip_forward=1`或者`echo 1 > /proc/sys/net/ipv4/ip_forward`命令打开转发功能。
+> 好了，在这里我们让`Linux`允许转发，这个包的目的地址也不是本机，那么它将接着走入`FORWARD`链，在`FORWARD`链里面，我们就可以定义详细的规则，也就是是否允许它通过，或者对这个包的方向流程进行一些改变，这也是我们实现访问控制的地方。
+
+`echo 1 > /proc/sys/net/ipv4/ip_forward` 开启允许转发后，可以看到有返回了，实现了不同网段的互通。
+
+```shell
+ip netns exec ns10 ping 192.168.10.101
+PING 192.168.10.101 (192.168.10.101) 56(84) bytes of data.
+64 bytes from 192.168.10.101: icmp_seq=1 ttl=63 time=0.150 ms
+64 bytes from 192.168.10.101: icmp_seq=2 ttl=63 time=0.078 ms
+...
+ip netns exec ns11 ping 172.16.18.101
+PING 172.16.18.101 (172.16.18.101) 56(84) bytes of data.
+64 bytes from 172.16.18.101: icmp_seq=1 ttl=64 time=0.105 ms
+64 bytes from 172.16.18.101: icmp_seq=2 ttl=64 time=0.058 ms
+...
+```
+
+但这里还是有个疑问，未开启转发前，为什么可以`ping`通`br`本身的`ip`呢？
+我认为是这样的，`br`本身的`ip`是属于本地的包，所以即使没开启转发，`Linux`也不会把这个包丢弃，并且会广播到其它的`br`上。而`ns`里的`ip`并不属于宿主机本地的包，所以未开启转发前，会把这个包丢弃。
+
+-----
+
+## 实现OVS的不同网桥互通
+
+```
+ovs-vsctl add-br br111;
+ip netns add ns111;
+ip link add ns111-veth0 type veth peer name ns111-veth1;
+ip link set ns111-veth1 netns ns111;
+ip netns exec ns111 ip addr add 10.1.1.101/24 dev ns111-veth1;
+ip netns exec ns111 ip link set dev ns111-veth1 up;
+ip netns exec ns111 ip route add default via 10.1.1.1;
+ovs-vsctl add-port br111 ns111-veth0;
+ip link set dev ns111-veth0 up;
+ip addr add 10.1.1.1/24 dev br111;
+ip link set br111 up;
+
+ovs-vsctl add-br br222;
+ip netns add ns222;
+ip link add ns222-veth0 type veth peer name ns222-veth1;
+ip link set ns222-veth1 netns ns222;
+ip netns exec ns222 ip addr add 172.1.1.101/24 dev ns222-veth1;
+ip netns exec ns222 ip link set dev ns222-veth1 up;
+ip netns exec ns222 ip route add default via 172.1.1.1;
+ovs-vsctl add-port br222 ns222-veth0;
+ip link set dev ns222-veth0 up;
+ip addr add 172.1.1.1/24 dev br222;
+ip link set br222 up;
+```
+
+和上面“不同网桥实现互通”唯一不同的是，我把网桥换成了`ovs`，连接`ovs`和`ns`的还是`veth`，开启转发后，同样可以实现互通。
+
+当不使用veth连接ovs和ns，而是使用ovs自身的port连接时，发现不一样的结果，不同网桥间并不能互通，下面是测试的例子：
+
+```shell
+ovs-vsctl add-br br111;
+# 通过 internal port 可以实现容器直接连接到OVS（测试了下，其它类型的端口好像不行）
+# 通过内部端口连接到 OVS 比通过 veth-pair实现更好的性能（https://arthurchiao.art/blog/ovs-deep-dive-6-internal-port/）
+ovs-vsctl add-port br111 tap1 -- set Interface tap1 type=internal;
+ip netns add ns111;
+ip link set tap1 netns ns111;
+ip netns exec ns111 ip addr add 10.1.1.101/24 dev tap1;
+ip netns exec ns111 ip link set tap1 up;
+ip netns exec ns111 ip link set lo up;
+ip addr add 10.1.1.1/24 dev br111;
+ip link set br111 up;
+
+ovs-vsctl add-br br222;
+ovs-vsctl add-port br222 tap2 -- set Interface tap2 type=internal;
+ip netns add ns222;
+ip link set tap2 netns ns222;
+ip netns exec ns222 ip addr add 172.2.1.101/24 dev tap2;
+ip netns exec ns222 ip link set tap2 up;
+ip netns exec ns222 ip link set lo up;
+ip addr add 172.2.1.1/24 dev br222;
+ip link set br222 up;
+
+ip netns exec ns111 ping 172.2.1.101
+connect: Network is unreachable
+ip netns exec ns111 ping 172.2.1.1
+connect: Network is unreachable
+```
+
+暂时想不明白上面的情况为什么不能互通？如果要实现互通，可以添加`patch`实现。
+
+```shell
+ovs-vsctl add-port br111 patch-ovs-1 -- set Interface patch-ovs-1 type=patch options:peer=patch-ovs-2;
+ovs-vsctl add-port br222 patch-ovs-2 -- set Interface patch-ovs-2 type=patch options:peer=patch-ovs-1;
+```
+
+
+
+----------
+
+### 怎样安装  wireshark ？
+
+上面安装了 mininet 是自动群安装 wireshark 的。如果我们在 centos 系统想安装 wireshark，可以按照下面的方法安装：
+
+```shell
+yum install -y wireshark wireshark-gnome
+```
+
+
+
+---
+
+### 参考：
+
+[openvswitch 实践一 创建patch port连接ovs两个桥](https://blog.csdn.net/u013743253/article/details/119601088)
 

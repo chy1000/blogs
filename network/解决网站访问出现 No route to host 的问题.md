@@ -1,4 +1,4 @@
-# 解决网站访问出现No route to host的问题
+# 解决网站访问出现 No route to host 的问题
 
 当我在一台服务器使用`go mod tidy`下载`golang`第三方包时，出现`github.com/docker/docker/api/types/events: module github.com/docker/docker/api/types/events: Get "https://goproxy.cn/github.com/docker/docker/api/types/eve: connect: no route to host`的报错。
 

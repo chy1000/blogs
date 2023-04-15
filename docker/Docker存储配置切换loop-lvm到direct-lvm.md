@@ -1,5 +1,11 @@
 # Docker存储配置切换loop-lvm到direct-lvm
 
+### 2023/4/1 更新：
+
+最近安装使用`yum`安装`docker`，默认安装完发现居然不是“`Storage Driver: devicemapper`”，而是`Storage Driver: overlay2`。上网搜索才发现，现在安装默认存储都是使用overlay2，而不是之前默认的loop-lvm，所以这篇文章的意义就不大了，没必要再折腾direct-lvm了。
+
+---
+
 最近看文章才知道，`docker`有两种的存储模式，分别是`docker`默认的`loop volume`和`Direct LVM`。
 
 #### 什么是`loop`设备
@@ -85,4 +91,3 @@ lvcreate --wipesignatures y -n Thinpool docker -l 95%VG
 lvcreate --wipesignatures y -n thinpoolmeta docker -l 1%VG
 # 其余设置
 ```
-

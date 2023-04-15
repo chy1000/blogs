@@ -22,7 +22,6 @@
     * [Ceph安装使用](ceph/Ceph安装使用.md)
     * [K8S使用Ceph作为持久化存储](ceph/K8S使用Ceph作为持久化存储.md)
     * [Ceph故障处理集](ceph/Ceph故障处理集.md)
-    * [理解Docker的COW](docker/理解Docker的COW.md)
     * [K8S节点挂了，Pod状态长时间不更新的问题](k8s/K8S节点挂了，Pod状态长时间不更新的问题.md)
 * Network & OVS
     * [[网络实险] 简单的局域网连接测试](network/[网络实险]简单的局域网连接测试.md)
@@ -36,10 +35,11 @@
     * [[网络基础] 什么是Vlan](network/[网络基础]什么是Vlan.md)
     * [华为交换机怎样限制某一IP只允许特定的IP访问](network/华为交换机怎样限制某一IP只允许特定的IP访问.md)
     * [OVS配置KVM网络实战](ovs/OVS配置KVM网络实战.md)
-    * [解决网站访问出现No route to host的问题](network/解决网站访问出现No route to host的问题.md)
+    * [解决网站访问出现 No route to host 的问题](network/解决网站访问出现 No route to host 的问题.md)
     * [OVS怎样限制接入虚拟机的IP](ovs/OVS怎样限制接入虚拟机的IP.md)
     * [Cisco Packet Tracer](network/Cisco Packet Tracer.md)
     * [OVS实现NAT地址转换](ovs/OVS实现NAT地址转换.md)
+    * [解决实现NAT过程中遇到的能访问IP不能访问域名的问题](network/解决实现NAT过程中能访问IP不能访问域名的问题.md)
 * Golang
     * [Goland远程调试配置](golang/Goland远程调试配置.md)
     * [正则的两种使用方式](golang/正则的两种使用方式.md)
@@ -48,9 +48,11 @@
     * [for range 原理](golang/for range 原理.md)
     * [GOROOT、GOPATH 和 GO Module的关系](golang/GOROOT、GOPATH 和 GO Module的关系.md)
     * [理解 map 底层原理](golang/理解map底层原理.md)
-* PHP & Laravel
+    * [[读书] 100 Go Mistakes and How to Avoid Them](golang/[读书] 100 Go Mistakes and How to Avoid Them.md)
+* PHP & Laravel & Mysql
     * [Laravel设计模式之工厂方法模式](laravel/Laravel设计模式之工厂方法模式.md)
     * [Laravel设计模式之观察者模式](laravel/Laravel设计模式之观察者模式.md)
+    * [怎样恢复误删的mysql数据](mysql/怎样恢复误删的mysql数据.md)
 * Linux
     * [vrrpd 实现双主服务器](linux/vrrpd实现双主服务器.md)
     * [教训！不要随意缩小LVM的大小](linux/教训！不要随意缩小LVM的大小.md)
